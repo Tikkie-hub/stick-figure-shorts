@@ -16,11 +16,13 @@ import math
 import time
 import edge_tts
 import numpy as np
+from thai_text import load_font
 from PIL import Image, ImageDraw, ImageFont
 from moviepy import AudioFileClip, CompositeAudioClip, VideoClip, VideoFileClip
 from proglog import ProgressBarLogger
 from auto_knowledge_shorts import ensure_font, ROOT
 from story_art import StoryStage
+from render_errors import describe_error
 
 W, H = 1080, 1920
 ACTIONS = {"discover", "think", "run", "celebrate", "space", "read"}
@@ -216,9 +218,7 @@ def caption_image(group, active, font_path, accent, boxed=True):
     text = "".join(word["text"] for word in group)
     size = 88
     while size > 42:
-        font = ImageFont.truetype(
-            str(font_path), size, layout_engine=ImageFont.Layout.RAQM
-        )
+        font = load_font(str(font_path), size, layout_engine=ImageFont.Layout.RAQM)
         if draw.textlength(text, font=font) < 880:
             break
         size -= 4
@@ -265,14 +265,17 @@ def caption_image(group, active, font_path, accent, boxed=True):
 def render_project(project, directory):
     directory = Path(directory)
     status = directory / "status.json"
+    save_json(
+        status, {"status": "font", "progress": 1, "message": "กำลังเตรียมฟอนต์ภาษาไทย"}
+    )
     font = ensure_font(ROOT / "assets/fonts/Kanit-Bold.ttf")
     palette = project.get("palette", "pop")
     accent = PALETTES[palette][2]
     base = background(palette)
     cinematic = project.get("visual_style") == "cinematic"
     stage = StoryStage(font, project) if cinematic else None
-    heading_font = ImageFont.truetype(str(font), 45)
-    tiny_font = ImageFont.truetype(str(font), 29)
+    heading_font = load_font(str(font), 45)
+    tiny_font = load_font(str(font), 29)
     resources, timeline, audio_tracks = [], [], []
     source = None
     try:
@@ -353,7 +356,7 @@ def render_project(project, directory):
                 title = scene["header_title"][:32]
                 title_font = heading_font
                 while draw.textlength(title, font=title_font) > 850:
-                    title_font = ImageFont.truetype(str(font), title_font.size - 2)
+                    title_font = load_font(str(font), title_font.size - 2)
                 draw.text((540, 166), title, font=title_font, fill="white", anchor="mt")
                 draw.text(
                     (75, 285),
@@ -392,7 +395,7 @@ def render_project(project, directory):
                         "celebrate": "คำตอบคือ…",
                         "space": "มองขึ้นไป",
                     }.get(action, "เรื่องกำลังเปลี่ยนไป")
-                    label_font = ImageFont.truetype(str(font), 42)
+                    label_font = load_font(str(font), 42)
                     width = draw.textlength(label, font=label_font) + 70
                     x = 540 - width / 2
                     y = 405 - int(18 * math.exp(-local * 8))
@@ -415,7 +418,7 @@ def render_project(project, directory):
                 title = scene["header_title"]
                 title_font = heading_font
                 while draw.textlength(title, font=title_font) > 850:
-                    title_font = ImageFont.truetype(str(font), title_font.size - 2)
+                    title_font = load_font(str(font), title_font.size - 2)
                 width = draw.textlength(title, font=title_font) + 80
                 draw.rounded_rectangle(
                     ((1080 - width) / 2, 95, (1080 + width) / 2, 180),
@@ -508,17 +511,15 @@ if __name__ == "__main__":
         project = json.loads((directory / "project.json").read_text(encoding="utf-8"))
         render_project(project, directory)
     except Exception as error:
-        # Keep credential-bearing URLs out of the public job response.
-        message = (
-            "สร้างเสียงไม่ได้ ตรวจการเชื่อมต่อ Edge TTS แล้วลองใหม่"
-            if isinstance(
-                error, (edge_tts.exceptions.EdgeTTSException, asyncio.TimeoutError)
-            )
-            else "สร้างคลิปไม่สำเร็จ กรุณาตรวจไฟล์พื้นหลังหรือการเชื่อมต่อ แล้วลองอีกครั้ง"
-        )
-        save_json(
-            directory / "status.json",
-            {"status": "failed", "progress": 0, "message": message},
-        )
-        print(type(error).__name__, file=sys.stderr)
+        stage = "startup"
+        try:
+            stage = json.loads(
+                (directory / "status.json").read_text(encoding="utf-8")
+            ).get("status", "startup")
+        except (OSError, ValueError):
+            pass
+        diagnostic = describe_error(error, stage)
+        save_json(directory / "status.json", diagnostic)
+        save_json(directory / "error.json", diagnostic)
+        print(json.dumps(diagnostic, ensure_ascii=True, indent=2), file=sys.stderr)
         sys.exit(1)

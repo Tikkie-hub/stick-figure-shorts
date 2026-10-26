@@ -2,6 +2,7 @@
 
 import math
 import numpy as np
+from thai_text import load_font
 from PIL import Image, ImageDraw, ImageFont
 
 SIZE = (1080, 1920)
@@ -21,7 +22,7 @@ class StoryStage:
 
     def font(self, size):
         if size not in self.fonts:
-            self.fonts[size] = ImageFont.truetype(
+            self.fonts[size] = load_font(
                 self.font_path, size, layout_engine=ImageFont.Layout.RAQM
             )
         return self.fonts[size]

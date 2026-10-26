@@ -7,10 +7,10 @@ ROOT = Path(__file__).resolve().parent
 SOURCE_FILES = (
     'README.md', 'CODEX.md', 'requirements.txt', 'auto_knowledge_shorts.py',
     'studio_render.py', 'story_art.py', 'story_planner.py', 'story_schema.py',
-    'package_project.py', 'web/app.py', 'web/studio.py', 'web/requirements.txt',
+    'package_project.py', 'thai_text.py', 'render_errors.py', 'web/app.py', 'web/studio.py', 'web/requirements.txt',
     'web/start.bat', 'web/open_browser.py', 'web/🚀 เปิด Gemini Studio.bat',
     'web/templates/index.html', 'web/templates/studio.html',
-    'assets/backgrounds/README.md',
+    'assets/backgrounds/README.md', 'tests/test_knowledge_shorts.py', 'tests/test_story_planner.py', 'tests/test_studio.py', 'tests/test_thai_text.py',
 )
 
 

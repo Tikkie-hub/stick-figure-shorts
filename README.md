@@ -251,3 +251,14 @@ API ใหม่: `GET /api/studio/capabilities`, `POST /api/studio/draft`
 Windows launcher แสดงขั้นตอน [1/4]–[4/4] และใช้ Python launcher ก่อน PATH
 รองรับ Python 3.10–3.12 ตาม dependencies ที่ตรึงไว้ หากแถบชื่อหน้าต่างขึ้น Select
 ให้กด Esc เพื่อออกจากโหมดเลือกข้อความ เบราว์เซอร์จะเปิดหลังเซิร์ฟเวอร์พร้อมแล้ว
+
+
+### ฟอนต์ไทยและการตรวจข้อผิดพลาดบน Windows
+
+หาก Pillow ไม่มี RAQM ระบบใช้ HarfBuzz + FreeType เพื่อจัดรูปอักษรไทยและ
+วางสระ/วรรณยุกต์อย่างถูกต้อง ไม่ถอยไปใช้การวาดตัวอักษรแบบ BASIC
+ไลบรารีติดตั้งผ่าน requirements โดยอัตโนมัติเมื่อเปิด start.bat
+ข้อผิดพลาดจะแสดงรหัสและขั้นตอน เช่น THAI_FONT_SETUP, FONT_LOAD_FAILED,
+TTS_FAILED หรือ TTS_TIMING_MISSING และบันทึก error.json/render.log ในงานนั้น
+บันทึกแสดงตำแหน่งโค้ดและข้อความที่กรอง URL/ข้อมูลรับรองแล้ว ไม่แสดงค่า secret
+RuntimeError จากเวอร์ชันเก่าเพียงคำเดียวไม่สามารถยืนยันสาเหตุที่แท้จริงได้

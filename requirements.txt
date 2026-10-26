@@ -3,3 +3,5 @@ edge-tts==7.3.1
 requests>=2.32.3,<3
 pillow>=10.4.0,<12
 truststore==0.10.4
+uharfbuzz==0.53.3
+freetype-py==2.5.1

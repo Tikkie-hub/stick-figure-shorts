@@ -19,6 +19,7 @@ import edge_tts
 import aiohttp
 import numpy as np
 import requests
+from thai_text import load_font
 from PIL import Image, ImageDraw, ImageFont, features
 from moviepy import CompositeAudioClip, AudioFileClip, VideoFileClip, ImageClip, CompositeVideoClip, concatenate_videoclips, vfx
 
@@ -48,9 +49,7 @@ def ensure_font(path):
     if not path.exists():
         download(FONT_URL, path)
     # Validate existing and newly downloaded fonts before rendering.
-    ImageFont.truetype(str(path), 40)
-    if not features.check_feature('raqm'):
-        raise RuntimeError('Pillow needs libraqm for correctly shaped Thai text. Install a Pillow wheel with RAQM support.')
+    load_font(str(path), 40)
     return path
 
 
@@ -139,7 +138,7 @@ def wrap(text, font, width):
 def text_card(canvas, text, font_path, box, max_size, min_size=20):
     left, top, right, bottom = box
     for size in range(max_size, min_size - 1, -2):
-        font = ImageFont.truetype(str(font_path), size, layout_engine=ImageFont.Layout.RAQM)
+        font = load_font(str(font_path), size, layout_engine=ImageFont.Layout.RAQM)
         lines = wrap(text, font, right - left - 64)
         line_height = sum(font.getmetrics()) + 10
         if len(lines) * line_height <= bottom - top - 48:
@@ -163,7 +162,7 @@ def overlay(scene, font):
 
 
 def subtitle_segments(text, font):
-    face = ImageFont.truetype(str(font), 48, layout_engine=ImageFont.Layout.RAQM)
+    face = load_font(str(font), 48, layout_engine=ImageFont.Layout.RAQM)
     lines = wrap(text, face, 880)
     return ['\n'.join(lines[i:i + 2]) for i in range(0, len(lines), 2)]
 
