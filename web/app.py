@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 from flask_cors import CORS
 import urllib.request
 import json
@@ -7,17 +7,39 @@ import base64
 import os
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/chat": {"origins": "*"}, r"/api/generate-image": {"origins": "*"}})
+app.config["MAX_CONTENT_LENGTH"] = 80 * 1024 * 1024
+from studio import studio
+app.register_blueprint(studio)
 
-# Helper for SSL ignore in urllib
+@app.errorhandler(413)
+def too_large(error):
+    return jsonify(error="ไฟล์ใหญ่เกิน 80 MB กรุณาเลือกไฟล์ที่เล็กลง"), 413
+
+# Verify HTTPS using the configured trust roots
 def get_ssl_context():
     ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
     return ctx
 
 @app.route('/')
 def index():
+    return render_template('studio.html')
+
+@app.get('/download-project')
+def download_project():
+    from package_project import project_zip
+    return send_file(project_zip(), mimetype='application/zip', as_attachment=True, download_name='ShortsStudio.zip')
+
+@app.get('/studio-font')
+def studio_font():
+    from pathlib import Path
+    font = Path(__file__).resolve().parents[1] / 'assets/fonts/Kanit-Bold.ttf'
+    if not font.exists():
+        return '', 404
+    return send_file(font, mimetype='font/ttf')
+
+@app.route('/gemini')
+def gemini_legacy():
     return render_template('index.html')
 
 @app.route('/api/chat', methods=['POST'])
@@ -136,6 +158,6 @@ def generate_image():
 
 if __name__ == '__main__':
     print("=" * 50)
-    print("🎨  Gemini Studio (Updated API Endpoint)")
+    print("Shorts Studio — Animated Story Factory")
     print("=" * 50)
-    app.run(debug=True, port=5000, host='0.0.0.0')
+    app.run(debug=False, port=5000, host='0.0.0.0')

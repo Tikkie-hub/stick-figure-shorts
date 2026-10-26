@@ -2,3 +2,9 @@ __pycache__/
 *.pyc
 .env
 web/__pycache__/
+.venv/
+outputs/
+assets/fonts/
+assets/backgrounds/*.mp4
+assets/backgrounds/*.mov
+assets/backgrounds/*.webm
