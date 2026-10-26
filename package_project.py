@@ -8,7 +8,7 @@ SOURCE_FILES = (
     'README.md', 'CODEX.md', 'requirements.txt', 'auto_knowledge_shorts.py',
     'studio_render.py', 'story_art.py', 'story_planner.py', 'story_schema.py',
     'package_project.py', 'web/app.py', 'web/studio.py', 'web/requirements.txt',
-    'web/start.bat', 'web/🚀 เปิด Gemini Studio.bat',
+    'web/start.bat', 'web/open_browser.py', 'web/🚀 เปิด Gemini Studio.bat',
     'web/templates/index.html', 'web/templates/studio.html',
     'assets/backgrounds/README.md',
 )

@@ -4,7 +4,7 @@
 
 [ดาวน์โหลด ShortsStudio.zip](https://github.com/Tikkie-hub/stick-figure-shorts/raw/refs/heads/shorts-studio/downloads/ShortsStudio.zip)
 
-แตก ZIP แล้วเปิด `ShortsStudio/web/start.bat` ต้องมี Python 3.10 ขึ้นไปและ
+แตก ZIP แล้วเปิด `ShortsStudio/web/start.bat` ต้องมี Python 3.10–3.12 (แนะนำ 3.12)และ
 อินเทอร์เน็ต โปรแกรมจะติดตั้ง dependencies และเปิดเว็บที่พอร์ต 5000
 ไฟล์ ZIP รวมซอร์สและบทตัวอย่าง ไม่รวม API Key, วิดีโอที่เรนเดอร์ หรือ venv
 
@@ -138,7 +138,7 @@ outputs/                  # MP4 และ .credits.json แหล่งที่
 
 ### ติดตั้งและใช้งาน
 
-ใช้ Python 3.10 ขึ้นไป พร้อม FFmpeg (ต้องมีตัวเข้ารหัส libx264 และ AAC)
+ใช้ Python 3.10–3.12 (แนะนำ 3.12) พร้อม FFmpeg (ต้องมีตัวเข้ารหัส libx264 และ AAC)
 แนะนำ Python 3.12 และ Pillow wheel ที่รองรับ RAQM สำหรับสระและวรรณยุกต์ไทย
 
 ```bash
@@ -247,3 +247,7 @@ API ใหม่: `GET /api/studio/capabilities`, `POST /api/studio/draft`
 
 ดาวน์โหลดไฟล์ติดตั้งจากปุ่ม “ดาวน์โหลดโปรเจกต์ ZIP” บนหัวหน้าเว็บได้โดยตรง
 ถ้าลิงก์ Artifact ในแชตดาวน์โหลดไม่ได้ ปุ่มนี้ส่ง ZIP ผ่านเว็บโดยไม่ใช้ Artifact
+
+Windows launcher แสดงขั้นตอน [1/4]–[4/4] และใช้ Python launcher ก่อน PATH
+รองรับ Python 3.10–3.12 ตาม dependencies ที่ตรึงไว้ หากแถบชื่อหน้าต่างขึ้น Select
+ให้กด Esc เพื่อออกจากโหมดเลือกข้อความ เบราว์เซอร์จะเปิดหลังเซิร์ฟเวอร์พร้อมแล้ว
